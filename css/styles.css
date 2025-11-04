@@ -16,5 +16,6 @@ p1{
     width: 100%;     /* image fills its container */
     max-width: 600px; /* limit max size on desktop */
     height: auto;    /* maintain aspect ratio */
-    display: block;  /* left-aligned */
+    display: block;  
+    margin: 0 auto;
 }
