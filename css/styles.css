@@ -1,0 +1,22 @@
+body{
+    padding: 25px;
+}
+h1 {
+    color: #5C6AC4;
+}
+
+/* Responsive left-aligned image */
+.responsive-img {
+    width: 100%;     /* image fills its container */
+    max-width: 600px; /* limit max size on desktop */
+    height: auto;    /* maintain aspect ratio */
+    display: block;  /* left-aligned */
+}
+
+/* Smaller images on mobile */
+@media (max-width: 600px) {
+    .responsive-img {
+        width: 80%;   /* takes 80% of screen width */
+        max-width: 300px;  /* smaller on phones */
+    }
+}
