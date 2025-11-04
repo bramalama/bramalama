@@ -1,13 +1,14 @@
 body{
     background-color: beige;
     padding: 25px;
+    font-family: monospace;
 }
 h1 {
     color: #5C6AC4;
 }
 p1{
     font-family: monospace;
-    font-size: 5px;
+    font-size: 10px;
 }
 
 /* Responsive left-aligned image */
