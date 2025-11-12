@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Simple Chmod Tool</title>
+<style>
+  body { font-family: sans-serif; padding: 20px; }
+  h1 { text-align: left; }
+  .section { margin-bottom: 20px; }
+  label { display: block; }
+  input[type="text"] { width: 100px; }
+  .permissions-row {display: flex;gap: 40px;}
+  .section {min-width: 100px;}
+
+</style>
+</head>
+<body>
+
+<h1>Chmod Tool</h1>
+
+<div class="permissions-row">
+ <div class="section">
+   <h3>Owner</h3>
+   <label><input type="checkbox" id="o-r"> Read</label>
+   <label><input type="checkbox" id="o-w"> Write</label>
+   <label><input type="checkbox" id="o-x"> Execute</label>
+ </div>
+
+ <div class="section">
+   <h3>Group</h3>
+   <label><input type="checkbox" id="g-r"> Read</label>
+   <label><input type="checkbox" id="g-w"> Write</label>
+   <label><input type="checkbox" id="g-x"> Execute</label>
+ </div>
+
+ <div class="section">
+   <h3>Public</h3>
+   <label><input type="checkbox" id="p-r"> Read</label>
+   <label><input type="checkbox" id="p-w"> Write</label>
+   <label><input type="checkbox" id="p-x"> Execute</label>
+ </div>
+</div>
+
+<div class="section">
+  <label>Octal: <input type="text" id="octal" placeholder="644"></label>
+  <label>Symbolic: <input type="text" id="symbolic" placeholder="-rw-r--r--"></label>
+</div>
+
+<script>
+const checkboxes = ['o-r','o-w','o-x','g-r','g-w','g-x','p-r','p-w','p-x'];
+
+function updateFromCheckboxes() {
+  let octalDigits = [];
+  let sym = '';
+  const mapping = [
+    {id:'o-r', val:4, sym:'r'},
+    {id:'o-w', val:2, sym:'w'},
+    {id:'o-x', val:1, sym:'x'},
+    {id:'g-r', val:4, sym:'r'},
+    {id:'g-w', val:2, sym:'w'},
+    {id:'g-x', val:1, sym:'x'},
+    {id:'p-r', val:4, sym:'r'},
+    {id:'p-w', val:2, sym:'w'},
+    {id:'p-x', val:1, sym:'x'}
+  ];
+
+  for (let i = 0; i < mapping.length; i += 3) {
+    let sum = 0;
+    for (let j = 0; j < 3; j++) {
+      let box = mapping[i + j];
+      if (document.getElementById(box.id).checked) {
+        sum += box.val;
+        sym += box.sym;
+      } else {
+        sym += '-';
+      }
+    }
+    octalDigits.push(sum);
+  }
+
+  document.getElementById('octal').value = octalDigits.join(''); // join digits, no leading zero
+  document.getElementById('symbolic').value = sym;
+}
+
+function updateFromOctal() {
+  let oct = document.getElementById('octal').value;
+  if(!/^[0-7]{3,4}$/.test(oct)) return;
+
+  if(oct.length==4) oct=oct.slice(1); // remove leading 0 if present
+
+  const vals = [parseInt(oct[0]), parseInt(oct[1]), parseInt(oct[2])];
+  const mapping = [
+    ['o-r','o-w','o-x'],
+    ['g-r','g-w','g-x'],
+    ['p-r','p-w','p-x']
+  ];
+
+  let sym='';
+  for(let i=0;i<3;i++){
+    let val = vals[i];
+    sym += (val&4)?'r':'-';
+    sym += (val&2)?'w':'-';
+    sym += (val&1)?'x':'-';
+
+    mapping[i].forEach((id,j)=>{
+      document.getElementById(id).checked = !!(val & (4 >> j % 3));
+    });
+  }
+  document.getElementById('symbolic').value = sym;
+}
+
+checkboxes.forEach(id => document.getElementById(id).addEventListener('change', updateFromCheckboxes));
+document.getElementById('octal').addEventListener('input', updateFromOctal);
+</script>
+<p>_________________________</p>
+<p>To set permissions
+<span style="font-family: monospace; background-color: #e4e6e8;">$ sudo chmod 640</span>
+</p>
+<p>To set owner & group
+<span style="font-family: monospace; background-color: #e4e6e8;">$ sudo chown owner:group</span>
+</p>
+</body>
+</html>
